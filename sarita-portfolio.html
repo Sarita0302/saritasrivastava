@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sarita Srivastava — Senior Product Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0A0A0F;
+  --ink2: #12121A;
+  --ink3: #1A1A26;
+  --gold: #C9A84C;
+  --gold-soft: rgba(201,168,76,0.12);
+  --gold-dim: rgba(201,168,76,0.06);
+  --teal: #2DD4BF;
+  --teal-soft: rgba(45,212,191,0.1);
+  --rose: #FB7185;
+  --white: #F5F0E8;
+  --white2: #EDE8DC;
+  --muted: #6B6B7A;
+  --border: rgba(245,240,232,0.07);
+  --border2: rgba(245,240,232,0.12);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--ink);
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+.cursor{
+  position:fixed;width:8px;height:8px;
+  background:var(--gold);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s;
+  mix-blend-mode:difference;
+}
+.cursor-ring{
+  position:fixed;width:32px;height:32px;
+  border:1px solid rgba(201,168,76,0.4);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:all 0.15s ease;
+}
+
+/* NOISE OVERLAY */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.4;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:24px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid transparent;
+  transition:all 0.3s;
+  backdrop-filter:blur(0px);
+}
+nav.scrolled{
+  border-bottom-color:var(--border);
+  backdrop-filter:blur(20px);
+  background:rgba(10,10,15,0.8);
+  padding:16px 60px;
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;
+  letter-spacing:0.02em;
+  color:var(--white);
+}
+.nav-logo span{color:var(--gold);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{
+  font-size:0.72rem;color:var(--muted);
+  text-decoration:none;letter-spacing:0.1em;
+  text-transform:uppercase;
+  transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--white);}
+.nav-cta{
+  background:transparent;
+  border:1px solid var(--gold-dim);
+  border-radius:4px;
+  color:var(--gold);
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;letter-spacing:0.1em;
+  padding:8px 20px;text-decoration:none;
+  transition:all 0.2s;
+}
+.nav-cta:hover{background:var(--gold-soft);border-color:var(--gold);}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;
+  padding:0 60px;
+  position:relative;
+  overflow:hidden;
+}
+
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 60% at 80% 30%, rgba(201,168,76,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 70%, rgba(45,212,191,0.04) 0%, transparent 60%);
+}
+
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(245,240,232,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,240,232,0.025) 1px, transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 70%);
+}
+
+.hero-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;color:var(--gold);
+  letter-spacing:0.2em;text-transform:uppercase;
+  margin-bottom:24px;
+  opacity:0;animation:fadeUp 0.8s 0.2s forwards;
+}
+
+.hero-name{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3.5rem,7vw,6rem);
+  font-weight:900;line-height:0.95;
+  letter-spacing:-0.03em;
+  margin-bottom:8px;
+  opacity:0;animation:fadeUp 0.8s 0.4s forwards;
+}
+
+.hero-name .italic{font-style:italic;color:var(--gold);}
+
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.2rem,2.5vw,1.8rem);
+  font-weight:400;font-style:italic;
+  color:var(--muted);line-height:1.4;
+  margin-bottom:40px;
+  opacity:0;animation:fadeUp 0.8s 0.6s forwards;
+}
+
+.hero-stats{
+  display:flex;gap:48px;margin-bottom:48px;
+  opacity:0;animation:fadeUp 0.8s 0.8s forwards;
+}
+.stat-item{display:flex;flex-direction:column;gap:4px;}
+.stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:2.2rem;font-weight:900;
+  color:var(--white);line-height:1;
+}
+.stat-num .accent{color:var(--gold);}
+.stat-desc{
+  font-family:'DM Mono',monospace;
+  font-size:0.62rem;color:var(--muted);
+  letter-spacing:0.08em;text-transform:uppercase;
+  line-height:1.4;
+}
+
+.hero-ctas{
+  display:flex;gap:16px;
+  opacity:0;animation:fadeUp 0.8s 1s forwards;
+}
+.btn-primary{
+  background:var(--gold);
+  border:none;border-radius:4px;
+  color:var(--ink);font-family:'DM Sans',sans-serif;
+  font-size:0.82rem;font-weight:600;
+  padding:14px 32px;text-decoration:none;
+  transition:all 0.2s;cursor:none;
+}
+.btn-primary:hover{background:#E8C060;transform:translateY(-2px);}
+.btn-secondary{
+  background:transparent;
+  border:1px solid var(--border2);border-radius:4px;
+  color:var(--white);font-family:'DM Sans',sans-serif;
+  font-size:0.82rem;font-weight:400;
+  padding:14px 32px;text-decoration:none;
+  transition:all 0.2s;cursor:none;
+}
+.btn-secondary:hover{border-color:var(--white);}
+
+.hero-scroll{
+  position:absolute;bottom:40px;left:60px;
+  display:flex;align-items:center;gap:12px;
+  font-family:'DM Mono',monospace;
+  font-size:0.62rem;color:var(--muted);
+  letter-spacing:0.1em;text-transform:uppercase;
+  opacity:0;animation:fadeUp 0.8s 1.2s forwards;
+}
+.scroll-line{width:40px;height:1px;background:var(--muted);}
+
+/* SECTIONS */
+section{
+  padding:120px 60px;
+  position:relative;
+}
+
+.section-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;color:var(--gold);
+  letter-spacing:0.2em;text-transform:uppercase;
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;
+}
+.section-label::after{
+  content:'';flex:1;max-width:40px;
+  height:1px;background:var(--gold);opacity:0.4;
+}
+
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,4vw,3.2rem);
+  font-weight:900;line-height:1.1;
+  letter-spacing:-0.02em;
+  margin-bottom:60px;
+}
+
+.section-title .italic{font-style:italic;color:var(--gold);}
+
+/* ABOUT */
+.about-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;align-items:start;
+}
+
+.about-text p{
+  font-size:1.05rem;line-height:1.8;
+  color:rgba(245,240,232,0.75);
+  margin-bottom:20px;
+}
+
+.about-text p strong{color:var(--white);}
+
+.about-text p em{
+  font-family:'Playfair Display',serif;
+  font-style:italic;color:var(--gold);
+}
+
+.about-right{display:flex;flex-direction:column;gap:32px;}
+
+.philosophy-card{
+  background:var(--ink2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:28px;
+}
+
+.phil-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;color:var(--gold);
+  letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:16px;
+}
+
+.phil-items{display:flex;flex-direction:column;gap:12px;}
+
+.phil-item{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:0.85rem;line-height:1.5;
+  color:rgba(245,240,232,0.7);
+}
+
+.phil-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);flex-shrink:0;
+  margin-top:6px;
+}
+
+/* SKILLS */
+.skills-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.skill-card{
+  background:var(--ink2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:28px;
+  transition:all 0.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+.skill-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+
+.skill-card:hover{
+  border-color:rgba(201,168,76,0.2);
+  transform:translateY(-4px);
+}
+.skill-card:hover::before{opacity:1;}
+
+.skill-icon{font-size:1.6rem;margin-bottom:16px;}
+
+.skill-name{
+  font-family:'DM Sans',sans-serif;
+  font-size:0.82rem;font-weight:600;
+  letter-spacing:0.05em;text-transform:uppercase;
+  color:var(--white);margin-bottom:12px;
+}
+
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px;}
+
+.tag{
+  background:rgba(245,240,232,0.05);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:3px 10px;
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;color:var(--muted);
+  letter-spacing:0.06em;
+}
+
+/* EXPERIENCE */
+.exp-timeline{
+  display:flex;flex-direction:column;
+  gap:0;
+  max-width:820px;
+}
+
+.exp-item{
+  display:grid;
+  grid-template-columns:180px 1fr;
+  gap:40px;
+  padding-bottom:48px;
+  position:relative;
+}
+
+.exp-item::before{
+  content:'';
+  position:absolute;
+  left:179px;top:8px;bottom:0;
+  width:1px;background:var(--border2);
+}
+
+.exp-item:last-child::before{display:none;}
+
+.exp-item::after{
+  content:'';
+  position:absolute;
+  left:175px;top:6px;
+  width:9px;height:9px;
+  border-radius:50%;
+  background:var(--gold);
+  border:2px solid var(--ink);
+  box-shadow:0 0 0 1px var(--gold);
+}
+
+.exp-dates{
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;color:var(--muted);
+  letter-spacing:0.08em;
+  padding-top:4px;
+  text-align:right;
+}
+
+.exp-content{padding-left:20px;}
+
+.exp-role{
+  font-family:'Playfair Display',serif;
+  font-size:1.15rem;font-weight:700;
+  color:var(--white);margin-bottom:4px;
+}
+
+.exp-company{
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;color:var(--gold);
+  letter-spacing:0.1em;text-transform:uppercase;
+  margin-bottom:16px;
+}
+
+.exp-desc{
+  font-size:0.85rem;line-height:1.7;
+  color:rgba(245,240,232,0.65);
+  margin-bottom:16px;
+}
+
+.exp-achievements{
+  display:flex;flex-direction:column;gap:8px;
+}
+
+.exp-achievement{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:0.82rem;line-height:1.5;
+  color:rgba(245,240,232,0.7);
+}
+
+.ach-marker{
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;color:var(--gold);
+  flex-shrink:0;margin-top:2px;
+}
+
+.exp-metrics{
+  display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;
+}
+
+.metric-pill{
+  background:var(--gold-dim);
+  border:1px solid rgba(201,168,76,0.15);
+  border-radius:20px;
+  padding:5px 14px;
+  font-family:'DM Mono',monospace;
+  font-size:0.62rem;color:var(--gold);
+  letter-spacing:0.06em;
+}
+
+/* PRODUCTS */
+.products-intro{
+  font-size:1rem;line-height:1.8;
+  color:rgba(245,240,232,0.65);
+  max-width:600px;margin-bottom:64px;
+}
+
+.product-card{
+  background:var(--ink2);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:52px;
+  margin-bottom:32px;
+  position:relative;
+  overflow:hidden;
+  transition:border-color 0.3s;
+}
+
+.product-card:hover{border-color:rgba(201,168,76,0.2);}
+
+.product-card::after{
+  content:'';
+  position:absolute;
+  top:-60px;right:-60px;
+  width:200px;height:200px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.product-header{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:24px;
+  align-items:flex-start;
+  margin-bottom:36px;
+}
+
+.product-number{
+  font-family:'Playfair Display',serif;
+  font-size:5rem;font-weight:900;font-style:italic;
+  color:rgba(201,168,76,0.08);
+  line-height:1;
+  position:absolute;top:32px;right:52px;
+  z-index:0;
+}
+
+.product-tag{
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;color:var(--gold);
+  letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:10px;
+}
+
+.product-name{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:900;
+  line-height:1.1;letter-spacing:-0.02em;
+  margin-bottom:8px;
+  position:relative;z-index:1;
+}
+
+.product-name .italic{font-style:italic;color:var(--gold);}
+
+.product-tagline{
+  font-size:0.88rem;color:var(--muted);
+  line-height:1.5;
+  position:relative;z-index:1;
+}
+
+.product-live-btn{
+  background:transparent;
+  border:1px solid var(--border2);border-radius:8px;
+  color:var(--white);font-family:'DM Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.1em;
+  padding:10px 20px;text-decoration:none;
+  transition:all 0.2s;
+  display:flex;align-items:center;gap:8px;
+  white-space:nowrap;height:fit-content;
+  cursor:none;
+}
+.product-live-btn:hover{
+  background:var(--gold-soft);
+  border-color:var(--gold);color:var(--gold);
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--teal);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{
+  0%,100%{opacity:1;}50%{opacity:0.3;}
+}
+
+.product-divider{
+  height:1px;background:var(--border);margin:32px 0;
+}
+
+.product-body{
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:48px;
+}
+
+.product-section-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;color:var(--muted);
+  letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.product-desc{
+  font-size:0.88rem;line-height:1.8;
+  color:rgba(245,240,232,0.7);
+  margin-bottom:24px;
+}
+
+.product-features{
+  display:flex;flex-direction:column;gap:10px;
+}
+
+.feature-row{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:0.82rem;line-height:1.5;
+  color:rgba(245,240,232,0.7);
+}
+
+.feature-icon{font-size:0.9rem;flex-shrink:0;margin-top:1px;}
+
+.product-right{display:flex;flex-direction:column;gap:28px;}
+
+.product-stats-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.pstat{
+  background:rgba(245,240,232,0.03);
+  border:1px solid var(--border);border-radius:10px;
+  padding:16px;
+}
+
+.pstat-num{
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem;font-weight:900;
+  color:var(--gold);line-height:1;margin-bottom:4px;
+}
+
+.pstat-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.58rem;color:var(--muted);
+  letter-spacing:0.08em;text-transform:uppercase;
+  line-height:1.4;
+}
+
+.tech-stack{display:flex;flex-wrap:wrap;gap:6px;}
+
+.tech-badge{
+  background:rgba(45,212,191,0.06);
+  border:1px solid rgba(45,212,191,0.15);
+  border-radius:4px;
+  padding:4px 12px;
+  font-family:'DM Mono',monospace;
+  font-size:0.62rem;color:var(--teal);
+  letter-spacing:0.06em;
+}
+
+/* PRODUCT-SPECIFIC ACCENTS */
+.card-eas .product-name .italic{color:var(--gold);}
+.card-imh .product-card::after{
+  background:radial-gradient(circle, rgba(251,113,133,0.06) 0%, transparent 70%);
+}
+.card-imh .product-name .italic{color:var(--rose);}
+.card-imh .product-tag{color:var(--rose);}
+.card-imh .pstat-num{color:var(--rose);}
+.card-imh .tech-badge{
+  background:rgba(251,113,133,0.06);
+  border-color:rgba(251,113,133,0.15);
+  color:var(--rose);
+}
+.card-imh .product-live-btn:hover{
+  background:rgba(251,113,133,0.1);
+  border-color:var(--rose);color:var(--rose);
+}
+
+.card-rice .product-card::after{
+  background:radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 70%);
+}
+.card-rice .product-name .italic{color:var(--teal);}
+.card-rice .product-tag{color:var(--teal);}
+.card-rice .pstat-num{color:var(--teal);}
+.card-rice .product-live-btn:hover{
+  background:rgba(45,212,191,0.08);
+  border-color:var(--teal);color:var(--teal);
+}
+.card-rice .section-label{color:var(--teal);}
+
+/* CONTACT */
+.contact-wrap{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:center;
+}
+
+.contact-left .big-text{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.5rem,5vw,4rem);
+  font-weight:900;line-height:1.1;
+  letter-spacing:-0.02em;
+  margin-bottom:24px;
+}
+
+.contact-left .big-text .italic{
+  font-style:italic;color:var(--gold);
+}
+
+.contact-left p{
+  font-size:0.95rem;line-height:1.8;
+  color:rgba(245,240,232,0.6);
+  margin-bottom:40px;
+}
+
+.contact-links{display:flex;flex-direction:column;gap:16px;}
+
+.contact-link{
+  display:flex;align-items:center;gap:16px;
+  text-decoration:none;
+  padding:16px 20px;
+  background:var(--ink2);
+  border:1px solid var(--border);border-radius:10px;
+  transition:all 0.2s;cursor:none;
+}
+
+.contact-link:hover{
+  border-color:rgba(201,168,76,0.3);
+  background:var(--gold-dim);
+}
+
+.cl-icon{font-size:1.1rem;}
+
+.cl-content{flex:1;}
+
+.cl-label{
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;color:var(--muted);
+  letter-spacing:0.1em;text-transform:uppercase;
+  margin-bottom:2px;
+}
+
+.cl-value{
+  font-size:0.85rem;color:var(--white);
+}
+
+.cl-arrow{color:var(--muted);font-size:0.9rem;}
+
+/* FOOTER */
+footer{
+  padding:40px 60px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+
+.footer-text{
+  font-family:'DM Mono',monospace;
+  font-size:0.62rem;color:var(--muted);
+  letter-spacing:0.08em;
+}
+
+.footer-brand{
+  font-family:'Playfair Display',serif;
+  font-size:0.9rem;color:var(--muted);
+}
+.footer-brand span{color:var(--gold);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(24px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.reveal{
+  opacity:0;transform:translateY(24px);
+  transition:all 0.7s ease;
+}
+.reveal.visible{opacity:1;transform:none;}
+
+/* DIVIDER */
+.section-divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border2),transparent);
+  margin:0 60px;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+  nav{padding:20px 24px;}
+  nav.scrolled{padding:14px 24px;}
+  .nav-links{display:none;}
+  section{padding:80px 24px;}
+  .hero{padding:0 24px;}
+  .hero-stats{gap:28px;flex-wrap:wrap;}
+  .about-grid,.contact-wrap{grid-template-columns:1fr;}
+  .skills-grid{grid-template-columns:repeat(2,1fr);}
+  .product-body{grid-template-columns:1fr;}
+  .product-header{grid-template-columns:1fr;}
+  .exp-item{grid-template-columns:1fr;gap:8px;}
+  .exp-item::before,.exp-item::after{display:none;}
+  .exp-dates{text-align:left;}
+  .exp-content{padding-left:0;}
+  footer{flex-direction:column;gap:12px;text-align:center;}
+  .section-divider{margin:0 24px;}
+  .hero-ctas{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-logo">S<span>.</span>Srivastava</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:sarita.srivastava0302@gmail.com" class="nav-cta">Get in Touch</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-label">Senior Product Manager · Available for New Roles</div>
+
+  <h1 class="hero-name">
+    Sarita<br><span class="italic">Srivastava</span>
+  </h1>
+
+  <p class="hero-title">
+    Building products at the intersection of<br>
+    data integrity, AI, and enterprise workflows
+  </p>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">6<span class="accent">+</span></div>
+      <div class="stat-desc">Years B2B<br>SaaS PM</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">30<span class="accent">%</span></div>
+      <div class="stat-desc">Workflow conversion<br>improvement</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">40<span class="accent">%</span></div>
+      <div class="stat-desc">Activation rate<br>improvement</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">21<span class="accent">→8</span></div>
+      <div class="stat-desc">Days TTV<br>reduced</div>
+    </div>
+  </div>
+
+  <div class="hero-ctas">
+    <a href="#products" class="btn-primary">View My Work</a>
+    <a href="#contact" class="btn-secondary">Let's Talk</a>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">About</div>
+  <h2 class="section-title reveal">Who I <span class="italic">Am</span></h2>
+
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>I am a Senior Product Manager with <strong>6+ years of experience</strong> building and scaling B2B SaaS platforms. My work sits at the intersection of <em>data integrity, enterprise workflows, and AI-native product thinking</em> — where complex problems meet real business outcomes.</p>
+
+      <p>At MergerDomo, I built the product from zero — owning everything from discovery and roadmap to launch, growth, and infrastructure. I worked directly with founders, led cross-functional teams, and was promoted to Vice President in 2024. What I built there shaped how I think about product forever.</p>
+
+      <p>I am genuinely <strong>AI-native</strong>. I use Claude, Lovable, Perplexity, and Writesonic daily — not as curiosities but as core tools in how I research, prototype, and execute. I built three live product prototypes entirely using AI tools, including a real-time listing verification system that a VP of Product at a $57M company called exceptional.</p>
+
+      <p>I believe the best products are built by PMs who think in systems, speak in metrics, and never confuse shipping features with delivering value.</p>
+    </div>
+
+    <div class="about-right reveal">
+      <div class="philosophy-card">
+        <div class="phil-label">My Product Philosophy</div>
+        <div class="phil-items">
+          <div class="phil-item">
+            <div class="phil-dot"></div>
+            <span><strong>Systems before solutions.</strong> Trace every problem to its root cause before designing an answer.</span>
+          </div>
+          <div class="phil-item">
+            <div class="phil-dot"></div>
+            <span><strong>Metrics before features.</strong> Every decision must connect to a business outcome, not just a delivery milestone.</span>
+          </div>
+          <div class="phil-item">
+            <div class="phil-dot"></div>
+            <span><strong>Human language over charts.</strong> Data serves people — not the other way around.</span>
+          </div>
+          <div class="phil-item">
+            <div class="phil-dot"></div>
+            <span><strong>Ownership over coordination.</strong> The PM is accountable for the outcome, not just the process.</span>
+          </div>
+          <div class="phil-item">
+            <div class="phil-dot"></div>
+            <span><strong>Discovery before build.</strong> No PRD without five customer conversations. No exception.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="philosophy-card">
+        <div class="phil-label">Currently Exploring</div>
+        <div class="phil-items">
+          <div class="phil-item">
+            <div class="phil-dot"></div>
+            <span>Senior PM roles in data integrity, listings management, M&A platforms, or AI-native SaaS</span>
+          </div>
+          <div class="phil-item">
+            <div class="phil-dot"></div>
+            <span>Remote-first, growth-stage companies (Series B–D or bootstrapped profitable)</span>
+          </div>
+          <div class="phil-item">
+            <div class="phil-dot"></div>
+            <span>India-based or global remote roles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">Expertise</div>
+  <h2 class="section-title reveal">Core <span class="italic">Skills</span></h2>
+
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon">🗺️</div>
+      <div class="skill-name">Product Strategy</div>
+      <div class="skill-tags">
+        <span class="tag">Roadmap Ownership</span>
+        <span class="tag">OKRs</span>
+        <span class="tag">0→1 Development</span>
+        <span class="tag">GTM Planning</span>
+        <span class="tag">Product-Market Fit</span>
+        <span class="tag">RICE / ICE</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">🔍</div>
+      <div class="skill-name">Discovery & Research</div>
+      <div class="skill-tags">
+        <span class="tag">JTBD</span>
+        <span class="tag">User Interviews</span>
+        <span class="tag">Opportunity Solution Tree</span>
+        <span class="tag">Competitive Analysis</span>
+        <span class="tag">Usability Testing</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">📊</div>
+      <div class="skill-name">Analytics & Metrics</div>
+      <div class="skill-tags">
+        <span class="tag">Funnel Analysis</span>
+        <span class="tag">Cohort Analysis</span>
+        <span class="tag">A/B Testing</span>
+        <span class="tag">KPI Definition</span>
+        <span class="tag">NRR / TTV</span>
+        <span class="tag">North Star Metric</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">⚙️</div>
+      <div class="skill-name">Execution</div>
+      <div class="skill-tags">
+        <span class="tag">Agile / Scrum</span>
+        <span class="tag">PRD Writing</span>
+        <span class="tag">User Stories</span>
+        <span class="tag">Backlog Management</span>
+        <span class="tag">JIRA</span>
+        <span class="tag">Confluence</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">🤖</div>
+      <div class="skill-name">AI & Infrastructure</div>
+      <div class="skill-tags">
+        <span class="tag">Claude</span>
+        <span class="tag">Lovable</span>
+        <span class="tag">AWS CloudWatch</span>
+        <span class="tag">Cloudflare</span>
+        <span class="tag">Perplexity</span>
+        <span class="tag">API Thinking</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">📈</div>
+      <div class="skill-name">Growth & GTM</div>
+      <div class="skill-tags">
+        <span class="tag">SEO Strategy</span>
+        <span class="tag">Google Ads</span>
+        <span class="tag">LinkedIn Ads</span>
+        <span class="tag">Brevo</span>
+        <span class="tag">Content Calendar</span>
+        <span class="tag">PLG</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Career</div>
+  <h2 class="section-title reveal">Where I've <span class="italic">Built</span></h2>
+
+  <div class="exp-timeline">
+
+    <div class="exp-item reveal">
+      <div class="exp-dates">Sep 2019<br>— Mar 2026</div>
+      <div class="exp-content">
+        <div class="exp-role">Product Manager → Vice President of Product</div>
+        <div class="exp-company">MergerDomo Services Pvt Ltd · Remote</div>
+        <div class="exp-desc">B2B SaaS platform serving investment banks, M&A advisors, and financial institutions — deal lifecycle management, data intelligence, and enterprise workflows. Built the product from zero to a functioning platform serving multiple enterprise accounts.</div>
+        <div class="exp-achievements">
+          <div class="exp-achievement">
+            <span class="ach-marker">→</span>
+            <span>Led 0→1 development of the deal marketplace and matchmaking engine — EOI submission, NDA conversion, deal stage tracking, valuation tools, M&A scorecard, and deal summary generator</span>
+          </div>
+          <div class="exp-achievement">
+            <span class="ach-marker">→</span>
+            <span>Improved EOI-to-NDA conversion rate by 30% through funnel analysis, behavioural log review, workflow redesign, and stage visibility features</span>
+          </div>
+          <div class="exp-achievement">
+            <span class="ach-marker">→</span>
+            <span>Improved activation rate by 40% in 60 days by identifying a 3x conversion rate milestone through cohort analysis — rebuilt onboarding around that single milestone</span>
+          </div>
+          <div class="exp-achievement">
+            <span class="ach-marker">→</span>
+            <span>Reduced Time to Value from 21 days to 8 days by simplifying the onboarding flow to a single activation milestone</span>
+          </div>
+          <div class="exp-achievement">
+            <span class="ach-marker">→</span>
+            <span>Monitored AWS CloudWatch, managed Cloudflare security layer — resolved DDoS incidents, applied IP blocking, maintained infrastructure health</span>
+          </div>
+          <div class="exp-achievement">
+            <span class="ach-marker">→</span>
+            <span>Owned SEO strategy, content calendar, and paid acquisition across Google Ads, LinkedIn Ads, and Facebook Ads — contributing to 30% growth in organic traffic</span>
+          </div>
+          <div class="exp-achievement">
+            <span class="ach-marker">→</span>
+            <span>Promoted to Vice President in Aug 2024 — expanded scope to product strategy, growth initiatives, and revenue experimentation</span>
+          </div>
+        </div>
+        <div class="exp-metrics">
+          <span class="metric-pill">+30% conversion</span>
+          <span class="metric-pill">+40% activation</span>
+          <span class="metric-pill">21→8 days TTV</span>
+          <span class="metric-pill">10+ release cycles</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-dates">Jul 2017<br>— Mar 2018</div>
+      <div class="exp-content">
+        <div class="exp-role">Inventory & MIS Manager</div>
+        <div class="exp-company">Produce To Perfection · New Delhi</div>
+        <div class="exp-desc">Designed MIS dashboards and reporting systems — improving operational visibility and enabling data-driven decision-making across inventory management workflows. Foundation of my analytical and systems thinking approach.</div>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-dates">Mar 2012<br>— Jan 2014</div>
+      <div class="exp-content">
+        <div class="exp-role">Senior Project Coordinator</div>
+        <div class="exp-company">Sysnet Global Technologies · South Delhi</div>
+        <div class="exp-desc">Coordinated cross-functional technology initiatives — translated client requirements into structured execution plans and ensured on-time delivery across concurrent projects. Built early discipline in stakeholder management and delivery accountability.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="section-label">Portfolio</div>
+  <h2 class="section-title reveal">Products I've <span class="italic">Designed</span></h2>
+
+  <p class="products-intro reveal">Three live, working products built entirely using AI tools. Each one demonstrates a different PM capability — data integrity systems, emotional AI design, and product prioritisation frameworks. All three have prototype links you can explore now.</p>
+
+  <!-- PRODUCT 1 — EAS -->
+  <div class="card-eas reveal">
+    <div class="product-card">
+      <div class="product-number">01</div>
+
+      <div class="product-header">
+        <div>
+          <div class="product-tag">✦ Data Integrity · Listings Management · Enterprise SaaS</div>
+          <h3 class="product-name">Experience <span class="italic">Accuracy Score</span></h3>
+          <p class="product-tagline">A real-time listing data verification and health scoring system for enterprise multi-location businesses</p>
+        </div>
+        <a href="YOUR_EAS_LINK_HERE" target="_blank" class="product-live-btn">
+          <div class="live-dot"></div>
+          View Live Prototype
+        </a>
+      </div>
+
+      <div class="product-divider"></div>
+
+      <div class="product-body">
+        <div>
+          <div class="product-section-label">The Problem</div>
+          <p class="product-desc">Enterprise businesses manage listings across 100+ directories — Google Business Profile, Apple Maps, Facebook, Yelp, and more. The platform publishes data. But nobody verifies it actually landed correctly — or stayed correct after external overrides. The result is a 20% data inconsistency rate and 8% ingestion failure rate, while customers trust a green dashboard that is quietly lying to them. This is False Confidence — the platform shows success, the customer experiences failure.</p>
+
+          <div class="product-section-label">The Solution</div>
+          <p class="product-desc">EAS is a composite 0–100 health score per listing measuring accuracy, consistency, and verification across all connected directories. The Closed-Loop System: Verify → Detect → Prioritise → Resolve → Re-verify → Badge.</p>
+
+          <div class="product-features">
+            <div class="feature-row"><span class="feature-icon">🔍</span><span>Real-time verification engine — monitors data changes across distributed external sources</span></div>
+            <div class="feature-row"><span class="feature-icon">⚡</span><span>Root cause classification — ingestion failure vs external override vs propagation delay</span></div>
+            <div class="feature-row"><span class="feature-icon">📊</span><span>Priority-ranked dashboard — locations ranked by EAS score with one-click resolution</span></div>
+            <div class="feature-row"><span class="feature-icon">🏅</span><span>Verified Listing Badge — earned at 80+ EAS sustained for 7 days, shown in search results</span></div>
+            <div class="feature-row"><span class="feature-icon">🤖</span><span>AI search connection — high EAS = accurate AI citations in ChatGPT and Perplexity</span></div>
+          </div>
+        </div>
+
+        <div class="product-right">
+          <div>
+            <div class="product-section-label">Impact & Metrics</div>
+            <div class="product-stats-grid">
+              <div class="pstat">
+                <div class="pstat-num">100+</div>
+                <div class="pstat-label">Directories monitored</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num">72→85</div>
+                <div class="pstat-label">EAS improvement target at 90 days</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num">3</div>
+                <div class="pstat-label">Revenue vectors — retention, upsell, acquisition</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num">40%</div>
+                <div class="pstat-label">Support ticket reduction target</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="product-section-label">Context</div>
+            <p class="product-desc" style="margin-bottom:12px">Designed as part of a rigorous Senior PM evaluation process at a $57M B2B SaaS platform. The VP of Product called the approach exceptional. Cleared two rounds — L2 with Director and Senior PM — before the final VP round.</p>
+          </div>
+
+          <div>
+            <div class="product-section-label">Built With</div>
+            <div class="tech-stack">
+              <span class="tech-badge">Claude</span>
+              <span class="tech-badge">Lovable</span>
+              <span class="tech-badge">HTML/CSS/JS</span>
+              <span class="tech-badge">tiiny.site</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT 2 — IMH -->
+  <div class="card-imh reveal">
+    <div class="product-card">
+      <div class="product-number">02</div>
+
+      <div class="product-header">
+        <div>
+          <div class="product-tag">✦ AI · Voice-First · Emotional Wellness · Consumer</div>
+          <h3 class="product-name">IMH — <span class="italic">I'm Here</span></h3>
+          <p class="product-tagline">A voice-first AI reflection companion that listens, detects emotional patterns, and shows weekly insights in human language — not charts</p>
+        </div>
+        <a href="YOUR_IMH_LINK_HERE" target="_blank" class="product-live-btn">
+          <div class="live-dot" style="background:var(--rose)"></div>
+          View Live Prototype
+        </a>
+      </div>
+
+      <div class="product-divider"></div>
+
+      <div class="product-body">
+        <div>
+          <div class="product-section-label">The Problem</div>
+          <p class="product-desc">People have thoughts, stress, and emotions they cannot always express. Journaling has a 95% drop-off rate — it requires effort, time, and discipline that most people cannot sustain. Talking helps, but a safe, always-available space does not exist. Therapy has too high a vulnerability barrier. The result: emotions remain unprocessed, stress accumulates, and self-awareness never develops.</p>
+
+          <div class="product-section-label">The Differentiator</div>
+          <p class="product-desc">IMH is positioned as a witness, not a solution. The core insight: instead of mood charts, users see their week in human language — <em>"This week felt more stressed than calm. Work-related stress appeared four times. There were small positive moments on two days."</em> That is the real differentiator — insight over data.</p>
+
+          <div class="product-features">
+            <div class="feature-row"><span class="feature-icon">🎙️</span><span>Voice-first — 2 to 5 minutes of speaking, no account required, no recording stored</span></div>
+            <div class="feature-row"><span class="feature-icon">💬</span><span>Gentle reflection prompts — not advice, not therapy. Just the right question at the right moment</span></div>
+            <div class="feature-row"><span class="feature-icon">🌡️</span><span>Emotional detection — five states: Calm, Neutral, Stressed, Low, Overwhelmed. No clinical labels</span></div>
+            <div class="feature-row"><span class="feature-icon">📅</span><span>Weekly summary in human language — the real differentiator over every competitor</span></div>
+            <div class="feature-row"><span class="feature-icon">⚠️</span><span>Safety layer — gentle nudge after 5+ days of persistent distress, with user-controlled options</span></div>
+            <div class="feature-row"><span class="feature-icon">🔒</span><span>Full user controls — view history, delete entries, turn off tracking anytime</span></div>
+          </div>
+        </div>
+
+        <div class="product-right">
+          <div>
+            <div class="product-section-label">Target Users</div>
+            <div class="product-stats-grid">
+              <div class="pstat">
+                <div class="pstat-num" style="font-size:1.1rem;line-height:1.3">Working Professional</div>
+                <div class="pstat-label">25–35, overwhelmed, nowhere to download stress</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num" style="font-size:1.1rem;line-height:1.3">New Mother</div>
+                <div class="pstat-label">Identity shift, isolation, cannot burden family</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num" style="font-size:1.1rem;line-height:1.3">Lonely Elder</div>
+                <div class="pstat-label">Shrinking social circle, thoughts with nowhere to go</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num" style="font-size:1.1rem;line-height:1.3">Single Person</div>
+                <div class="pstat-label">No default person to debrief the day with</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="product-section-label">Positioning</div>
+            <p class="product-desc" style="font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--white);">"Not therapy. Not advice. Just a safe space to reflect."</p>
+          </div>
+
+          <div>
+            <div class="product-section-label">Built With</div>
+            <div class="tech-stack">
+              <span class="tech-badge" style="background:rgba(251,113,133,0.06);border-color:rgba(251,113,133,0.15);color:var(--rose)">Claude</span>
+              <span class="tech-badge" style="background:rgba(251,113,133,0.06);border-color:rgba(251,113,133,0.15);color:var(--rose)">Lovable</span>
+              <span class="tech-badge" style="background:rgba(251,113,133,0.06);border-color:rgba(251,113,133,0.15);color:var(--rose)">Voice AI</span>
+              <span class="tech-badge" style="background:rgba(251,113,133,0.06);border-color:rgba(251,113,133,0.15);color:var(--rose)">HTML/CSS/JS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT 3 — RICE -->
+  <div class="card-rice reveal">
+    <div class="product-card">
+      <div class="product-number">03</div>
+
+      <div class="product-header">
+        <div>
+          <div class="product-tag">✦ PM Toolkit · Prioritisation · Frameworks · AI-Native</div>
+          <h3 class="product-name">RICE <span class="italic">Prioritisation Engine</span></h3>
+          <p class="product-tagline">An interactive product prioritisation tool that scores features using the RICE framework and generates intelligent roadmap recommendations with PM insights</p>
+        </div>
+        <a href="YOUR_RICE_LINK_HERE" target="_blank" class="product-live-btn">
+          <div class="live-dot" style="background:var(--teal)"></div>
+          View Live Prototype
+        </a>
+      </div>
+
+      <div class="product-divider"></div>
+
+      <div class="product-body">
+        <div>
+          <div class="product-section-label">What It Does</div>
+          <p class="product-desc">The RICE Prioritisation Engine transforms backlog management from opinion-based debates into evidence-based decisions. Input any feature — name, description, and four RICE parameters — and the tool instantly calculates the score, ranks your full roadmap, generates PM insights, and classifies each feature into the priority matrix (Ship Now, Plan Carefully, Quick Win, or Deprioritise).</p>
+
+          <div class="product-section-label">The Formula</div>
+          <p class="product-desc" style="font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--teal)">RICE = ( Reach × Impact × Confidence ) ÷ Effort</p>
+
+          <div class="product-features">
+            <div class="feature-row"><span class="feature-icon">📥</span><span>Feature input with name, description, and four slider-based RICE parameters</span></div>
+            <div class="feature-row"><span class="feature-icon">🏆</span><span>Live ranked roadmap — sorted by score, with colour-coded health indicators</span></div>
+            <div class="feature-row"><span class="feature-icon">💡</span><span>AI-generated PM insight — identifies the weakest assumption and calls out low-confidence items</span></div>
+            <div class="feature-row"><span class="feature-icon">📐</span><span>Priority matrix — effort vs impact quadrant for visual decision-making</span></div>
+            <div class="feature-row"><span class="feature-icon">📊</span><span>Summary stats — total features, average score, total effort, top score</span></div>
+            <div class="feature-row"><span class="feature-icon">🗑️</span><span>Full backlog management — add, remove, and clear features dynamically</span></div>
+          </div>
+        </div>
+
+        <div class="product-right">
+          <div>
+            <div class="product-section-label">Why I Built This</div>
+            <p class="product-desc">During my final round interview at Experience.com, the Director of Product mentioned their internal prioritisation tool. I had already been using RICE manually in every roadmap conversation at MergerDomo. I built this to demonstrate that a PM who understands a framework deeply enough to build the tool around it is different from one who just uses the framework.</p>
+          </div>
+
+          <div>
+            <div class="product-section-label">Use It For</div>
+            <div class="product-stats-grid">
+              <div class="pstat">
+                <div class="pstat-num" style="font-size:1.1rem">Roadmap</div>
+                <div class="pstat-label">Quarterly planning and stakeholder alignment</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num" style="font-size:1.1rem">Sprint</div>
+                <div class="pstat-label">Backlog prioritisation before planning sessions</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num" style="font-size:1.1rem">Trade-offs</div>
+                <div class="pstat-label">Making scope decisions visible and defensible</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-num" style="font-size:1.1rem">Interviews</div>
+                <div class="pstat-label">Live demonstration of PM thinking in real time</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="product-section-label">Built With</div>
+            <div class="tech-stack">
+              <span class="tech-badge">Claude</span>
+              <span class="tech-badge">Lovable</span>
+              <span class="tech-badge">HTML/CSS/JS</span>
+              <span class="tech-badge">tiiny.site</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">Contact</div>
+
+  <div class="contact-wrap">
+    <div class="contact-left reveal">
+      <div class="big-text">
+        Let's build<br>something <span class="italic">real</span><br>together
+      </div>
+      <p>I am actively exploring Senior PM opportunities in data integrity, listings management, AI-native SaaS, M&A platforms, and enterprise products. Remote preferred. Open to India-based and global companies.</p>
+      <p>If you are building something that matters and need a PM who owns outcomes — not just features — let's talk.</p>
+    </div>
+
+    <div class="reveal">
+      <div class="contact-links">
+        <a href="mailto:sarita.srivastava0302@gmail.com" class="contact-link">
+          <div class="cl-icon">✉️</div>
+          <div class="cl-content">
+            <div class="cl-label">Email</div>
+            <div class="cl-value">sarita.srivastava0302@gmail.com</div>
+          </div>
+          <div class="cl-arrow">→</div>
+        </a>
+
+        <a href="https://linkedin.com/in/sarita-srivastava-24394978" target="_blank" class="contact-link">
+          <div class="cl-icon">💼</div>
+          <div class="cl-content">
+            <div class="cl-label">LinkedIn</div>
+            <div class="cl-value">linkedin.com/in/sarita-srivastava-24394978</div>
+          </div>
+          <div class="cl-arrow">→</div>
+        </a>
+
+        <a href="YOUR_EAS_LINK_HERE" target="_blank" class="contact-link">
+          <div class="cl-icon">🔗</div>
+          <div class="cl-content">
+            <div class="cl-label">EAS Prototype</div>
+            <div class="cl-value">Experience Accuracy Score — Live Demo</div>
+          </div>
+          <div class="cl-arrow">→</div>
+        </a>
+
+        <a href="YOUR_IMH_LINK_HERE" target="_blank" class="contact-link">
+          <div class="cl-icon">🎙️</div>
+          <div class="cl-content">
+            <div class="cl-label">IMH Prototype</div>
+            <div class="cl-value">I'm Here — AI Reflection Companion</div>
+          </div>
+          <div class="cl-arrow">→</div>
+        </a>
+
+        <a href="YOUR_RICE_LINK_HERE" target="_blank" class="contact-link">
+          <div class="cl-icon">📊</div>
+          <div class="cl-content">
+            <div class="cl-label">RICE Tool</div>
+            <div class="cl-value">Prioritisation Engine — Live Demo</div>
+          </div>
+          <div class="cl-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-text">© 2026 Sarita Srivastava · Built with AI tools · Faridabad, India</div>
+  <div class="footer-brand">S<span>.</span>Srivastava</div>
+</footer>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+});
+
+function animRing(){
+  rx+=(mx-rx)*0.12;
+  ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cursor.style.transform='translate(-50%,-50%) scale(2)';
+    ring.style.transform='translate(-50%,-50%) scale(1.5)';
+    ring.style.opacity='0.5';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cursor.style.transform='translate(-50%,-50%) scale(1)';
+    ring.style.transform='translate(-50%,-50%) scale(1)';
+    ring.style.opacity='1';
+  });
+});
+
+// Nav scroll
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll',()=>{
+  if(window.scrollY>60) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+    }
+  });
+},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+
+reveals.forEach(el=>obs.observe(el));
+</script>
+
+</body>
+</html>
