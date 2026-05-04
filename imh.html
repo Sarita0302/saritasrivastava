@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMH — I'm Here · AI Reflection Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D1117;
+    --bg2: #161B22;
+    --bg3: #1C2330;
+    --amber: #F0A500;
+    --amber-soft: rgba(240,165,0,0.12);
+    --sage: #7BAE8C;
+    --sage-soft: rgba(123,174,140,0.12);
+    --white: #F0EDE8;
+    --muted: #6E7681;
+    --border: rgba(240,237,232,0.08);
+    --calm: #7BAE8C;
+    --neutral: #94A3B8;
+    --stressed: #F59E0B;
+    --low: #EF6C00;
+    --overwhelmed: #DC2626;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 16px 60px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0 24px;
+  }
+
+  .nav-logo {
+    font-family: 'Lora', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-logo span {
+    color: var(--amber);
+  }
+
+  .nav-tabs {
+    display: flex;
+    background: var(--bg2);
+    border-radius: 20px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .nav-tab {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-tab.active {
+    background: var(--bg3);
+    color: var(--white);
+  }
+
+  /* SCREENS */
+  .screen { display: none; flex-direction: column; gap: 20px; }
+  .screen.active { display: flex; }
+
+  /* ── HOME SCREEN ── */
+  .greeting {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .greeting-time {
+    font-size: 0.68rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .greeting-text {
+    font-family: 'Lora', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--white);
+  }
+
+  .greeting-sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+
+  /* RECORD BUTTON */
+  .record-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 32px 0;
+  }
+
+  .record-btn-wrap {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pulse-ring {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 1px solid rgba(240,165,0,0.2);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  .pulse-ring:nth-child(2) { animation-delay: 0.8s; }
+  .pulse-ring:nth-child(3) { animation-delay: 1.6s; }
+
+  @keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.6; }
+    50% { transform: scale(1.12); opacity: 0.2; }
+    100% { transform: scale(0.95); opacity: 0.6; }
+  }
+
+  .record-btn {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(240,165,0,0.2) 0%, rgba(123,174,140,0.2) 100%);
+    border: 1.5px solid rgba(240,165,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+  }
+
+  .record-btn:hover {
+    background: linear-gradient(135deg, rgba(240,165,0,0.3) 0%, rgba(123,174,140,0.25) 100%);
+    transform: scale(1.04);
+  }
+
+  .record-btn.recording {
+    background: linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(239,108,0,0.2) 100%);
+    border-color: rgba(220,38,38,0.4);
+    animation: recordPulse 1s ease-in-out infinite;
+  }
+
+  @keyframes recordPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.2); }
+    50% { box-shadow: 0 0 0 12px rgba(220,38,38,0); }
+  }
+
+  .record-icon { font-size: 1.8rem; }
+
+  .record-label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .record-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 220px;
+  }
+
+  /* EMOTION STATES */
+  .emotion-bar {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .emotion-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .emotion-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .emotion-dot:hover { transform: scale(1.3); }
+  .dot-calm { background: var(--calm); }
+  .dot-neutral { background: var(--neutral); }
+  .dot-stressed { background: var(--stressed); }
+  .dot-low { background: var(--low); }
+  .dot-overwhelmed { background: var(--overwhelmed); }
+
+  .emotion-current {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .emotion-current strong {
+    color: var(--white);
+  }
+
+  /* CONVERSATION BUBBLE */
+  .conversation {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .bubble-user {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px 16px 4px 16px;
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    align-self: flex-end;
+    max-width: 85%;
+    color: var(--white);
+  }
+
+  .bubble-imh {
+    background: linear-gradient(135deg, var(--amber-soft) 0%, var(--sage-soft) 100%);
+    border: 1px solid rgba(240,165,0,0.15);
+    border-radius: 16px 16px 16px 4px;
+    padding: 14px 18px;
+    align-self: flex-start;
+    max-width: 88%;
+  }
+
+  .bubble-imh-label {
+    font-size: 0.6rem;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .bubble-imh p {
+    font-family: 'Lora', serif;
+    font-size: 0.88rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--white);
+  }
+
+  .reflection-prompts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .prompt-btn {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    padding: 10px 16px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+
+  .prompt-btn:hover {
+    border-color: rgba(240,165,0,0.3);
+    background: var(--amber-soft);
+  }
+
+  /* ── WEEKLY SCREEN ── */
+  .week-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .week-title {
+    font-family: 'Lora', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .week-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* SUMMARY TEXT — THE DIFFERENTIATOR */
+  .summary-card {
+    background: linear-gradient(135deg, var(--amber-soft) 0%, rgba(123,174,140,0.08) 100%);
+    border: 1px solid rgba(240,165,0,0.2);
+    border-radius: 16px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .summary-label {
+    font-size: 0.6rem;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .summary-main {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--white);
+  }
+
+  .summary-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .summary-bullet {
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  .summary-bullet::before {
+    content: '·';
+    color: var(--amber);
+    font-size: 1.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  /* MOOD CHART */
+  .chart-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .chart-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .chart-days {
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+    height: 80px;
+  }
+
+  .chart-day {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .chart-bar {
+    width: 100%;
+    border-radius: 6px 6px 2px 2px;
+    transition: height 0.5s ease;
+    min-height: 8px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .chart-bar:hover::after {
+    content: attr(data-label);
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.6rem;
+    color: var(--white);
+    padding: 3px 8px;
+    white-space: nowrap;
+    z-index: 10;
+  }
+
+  .chart-day-name {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* INSIGHT CARD */
+  .insight-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .insight-label {
+    font-size: 0.6rem;
+    color: var(--sage);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .insight-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .insight-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 1px; }
+
+  .insight-text {
+    font-family: 'Lora', serif;
+    font-size: 0.85rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--white);
+  }
+
+  /* ALERT BANNER */
+  .alert-banner {
+    background: linear-gradient(135deg, rgba(239,108,0,0.12) 0%, rgba(240,165,0,0.08) 100%);
+    border: 1px solid rgba(239,108,0,0.3);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .alert-label {
+    font-size: 0.6rem;
+    color: var(--low);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .alert-text {
+    font-family: 'Lora', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--white);
+  }
+
+  .alert-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .alert-btn-primary {
+    background: rgba(239,108,0,0.15);
+    border: 1px solid rgba(239,108,0,0.3);
+    border-radius: 20px;
+    color: #FDBA74;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .alert-btn-primary:hover {
+    background: rgba(239,108,0,0.25);
+  }
+
+  .alert-btn-secondary {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    padding: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.2s;
+  }
+
+  .alert-btn-secondary:hover { color: var(--white); }
+
+  /* ── SETTINGS SCREEN ── */
+  .settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .settings-label {
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 4px;
+  }
+
+  .settings-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .settings-item:last-child { border-bottom: none; }
+  .settings-item:hover { background: rgba(255,255,255,0.03); }
+
+  .settings-item-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .settings-item-name {
+    font-size: 0.82rem;
+    color: var(--white);
+  }
+
+  .settings-item-desc {
+    font-size: 0.68rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .toggle {
+    width: 40px;
+    height: 22px;
+    background: var(--bg3);
+    border-radius: 11px;
+    border: 1px solid var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+
+  .toggle.on { background: var(--sage); border-color: var(--sage); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+  }
+
+  .toggle.on::after { transform: translateX(18px); }
+
+  .settings-arrow {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .danger-btn {
+    background: transparent;
+    border: 1px solid rgba(220,38,38,0.2);
+    border-radius: 12px;
+    color: #FCA5A5;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    text-align: center;
+  }
+
+  .danger-btn:hover {
+    background: rgba(220,38,38,0.08);
+    border-color: rgba(220,38,38,0.4);
+  }
+
+  /* FOOTER */
+  .footer-note {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+    font-style: italic;
+    padding: 8px 0;
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">I'm <span>Here</span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showScreen('home', this)">Today</button>
+      <button class="nav-tab" onclick="showScreen('weekly', this)">Week</button>
+      <button class="nav-tab" onclick="showScreen('settings', this)">You</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       HOME SCREEN
+  ══════════════════════════════════════ -->
+  <div class="screen active" id="home">
+
+    <!-- Greeting -->
+    <div class="greeting">
+      <div class="greeting-time" id="greetTime">Good evening</div>
+      <div class="greeting-text" id="greetText">How are you<br>carrying yourself today?</div>
+      <div class="greeting-sub">No advice. No judgment. Just you.</div>
+    </div>
+
+    <!-- Emotion indicator -->
+    <div class="emotion-bar">
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <div style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">How you seem today</div>
+        <div class="emotion-current">Detected: <strong id="currentEmotion">Neutral</strong></div>
+      </div>
+      <div class="emotion-dots">
+        <div class="emotion-dot dot-calm" title="Calm" onclick="setEmotion('Calm', '#7BAE8C')"></div>
+        <div class="emotion-dot dot-neutral" title="Neutral" onclick="setEmotion('Neutral', '#94A3B8')"></div>
+        <div class="emotion-dot dot-stressed" title="Stressed" onclick="setEmotion('Stressed', '#F59E0B')"></div>
+        <div class="emotion-dot dot-low" title="Low" onclick="setEmotion('Low', '#EF6C00')"></div>
+        <div class="emotion-dot dot-overwhelmed" title="Overwhelmed" onclick="setEmotion('Overwhelmed', '#DC2626')"></div>
+      </div>
+    </div>
+
+    <!-- Record button -->
+    <div class="record-section">
+      <div class="record-btn-wrap">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+        <div class="record-btn" id="recordBtn" onclick="toggleRecord()">
+          <div class="record-icon" id="recordIcon">🎙️</div>
+          <div class="record-label" id="recordLabel">tap to speak</div>
+        </div>
+      </div>
+      <div class="record-hint" id="recordHint">
+        Speak freely for 2–5 minutes.<br>
+        IMH listens. No recording is stored.
+      </div>
+    </div>
+
+    <!-- Conversation (shown after demo tap) -->
+    <div class="conversation" id="conversation" style="display:none">
+
+      <div class="bubble-user">
+        "I had a really tiring day at work… everything felt like too much."
+      </div>
+
+      <div class="bubble-imh">
+        <div class="bubble-imh-label">IMH reflects</div>
+        <p>"It sounds like today really drained you."</p>
+      </div>
+
+      <div class="bubble-imh">
+        <div class="bubble-imh-label">A gentle question</div>
+        <p>"What part of the day felt the hardest to carry?"</p>
+      </div>
+
+      <div class="reflection-prompts">
+        <div style="font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px">You might reflect on…</div>
+        <button class="prompt-btn" onclick="selectPrompt(this)">
+          💭 &nbsp; What usually helps you recover from days like this?
+        </button>
+        <button class="prompt-btn" onclick="selectPrompt(this)">
+          🌿 &nbsp; Was there one small moment today that felt okay?
+        </button>
+        <button class="prompt-btn" onclick="selectPrompt(this)">
+          🔁 &nbsp; Is this tiredness new, or has it been building?
+        </button>
+      </div>
+
+    </div>
+
+    <div class="footer-note">
+      IMH is a reflection space — not therapy.<br>
+      Your thoughts stay private and safe.
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       WEEKLY SCREEN
+  ══════════════════════════════════════ -->
+  <div class="screen" id="weekly">
+
+    <div class="week-header">
+      <div class="week-title">This Week</div>
+      <div class="week-sub">Apr 22 – Apr 28, 2026</div>
+    </div>
+
+    <!-- SUMMARY TEXT — THE DIFFERENTIATOR -->
+    <div class="summary-card">
+      <div class="summary-label">✦ Weekly Summary</div>
+      <div class="summary-main">
+        "This week felt more stressed than calm."
+      </div>
+      <div class="summary-bullets">
+        <div class="summary-bullet">You had 3 low-energy days — mostly mid-week.</div>
+        <div class="summary-bullet">Work-related stress appeared in 4 of 5 sessions.</div>
+        <div class="summary-bullet">There were small positive moments on 2 days.</div>
+        <div class="summary-bullet">You spoke more slowly on Tuesday and Wednesday.</div>
+      </div>
+    </div>
+
+    <!-- MOOD CHART -->
+    <div class="chart-section">
+      <div class="chart-label">Daily Emotional Tone</div>
+      <div class="chart-days">
+        <div class="chart-day">
+          <div class="chart-bar" style="height:45%;background:var(--stressed);border-radius:6px 6px 2px 2px" data-label="Stressed"></div>
+          <div class="chart-day-name">Mon</div>
+        </div>
+        <div class="chart-day">
+          <div class="chart-bar" style="height:25%;background:var(--low);border-radius:6px 6px 2px 2px" data-label="Low"></div>
+          <div class="chart-day-name">Tue</div>
+        </div>
+        <div class="chart-day">
+          <div class="chart-bar" style="height:20%;background:var(--overwhelmed);border-radius:6px 6px 2px 2px" data-label="Overwhelmed"></div>
+          <div class="chart-day-name">Wed</div>
+        </div>
+        <div class="chart-day">
+          <div class="chart-bar" style="height:55%;background:var(--stressed);border-radius:6px 6px 2px 2px" data-label="Stressed"></div>
+          <div class="chart-day-name">Thu</div>
+        </div>
+        <div class="chart-day">
+          <div class="chart-bar" style="height:70%;background:var(--neutral);border-radius:6px 6px 2px 2px" data-label="Neutral"></div>
+          <div class="chart-day-name">Fri</div>
+        </div>
+        <div class="chart-day">
+          <div class="chart-bar" style="height:85%;background:var(--calm);border-radius:6px 6px 2px 2px" data-label="Calm"></div>
+          <div class="chart-day-name">Sat</div>
+        </div>
+        <div class="chart-day">
+          <div class="chart-bar" style="height:80%;background:var(--calm);border-radius:6px 6px 2px 2px" data-label="Calm"></div>
+          <div class="chart-day-name">Sun</div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--calm)"></div>Calm</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--neutral)"></div>Neutral</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--stressed)"></div>Stressed</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--low)"></div>Low</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--overwhelmed)"></div>Overwhelmed</div>
+      </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="insight-card">
+      <div class="insight-label">✦ IMH Notices</div>
+      <div class="insight-item">
+        <div class="insight-icon">🌤️</div>
+        <div class="insight-text">"You sounded more relaxed towards the weekend."</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-icon">🔁</div>
+        <div class="insight-text">"You mentioned feeling overwhelmed several times this week."</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-icon">✨</div>
+        <div class="insight-text">"There were small positive moments on Saturday and Sunday."</div>
+      </div>
+    </div>
+
+    <!-- GENTLE ALERT -->
+    <div class="alert-banner">
+      <div class="alert-label">⚠ A Gentle Notice</div>
+      <div class="alert-text">
+        "It seems like things have been heavy for a while. That takes courage to carry.
+        Some people find it helpful to talk to someone — even just once."
+      </div>
+      <div class="alert-actions">
+        <button class="alert-btn-primary">🔍 &nbsp; Explore support near me</button>
+        <button class="alert-btn-secondary">Maybe later — I'm okay for now</button>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      IMH never diagnoses. It only reflects what it hears.<br>
+      You are always in control.
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SETTINGS / YOU SCREEN
+  ══════════════════════════════════════ -->
+  <div class="screen" id="settings">
+
+    <div class="week-header">
+      <div class="week-title">Your Space</div>
+      <div class="week-sub">Privacy, history, and preferences</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Privacy Controls</div>
+      <div class="settings-card">
+        <div class="settings-item">
+          <div class="settings-item-left">
+            <div class="settings-item-name">Mood Tracking</div>
+            <div class="settings-item-desc">Allow IMH to detect emotional patterns</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-left">
+            <div class="settings-item-name">Weekly Insights</div>
+            <div class="settings-item-desc">Receive a summary every Sunday</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-left">
+            <div class="settings-item-name">Safety Alerts</div>
+            <div class="settings-item-desc">Gentle nudge if patterns suggest distress</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-left">
+            <div class="settings-item-name">Anonymous Mode</div>
+            <div class="settings-item-desc">No account, no identity required</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Your History</div>
+      <div class="settings-card">
+        <div class="settings-item" onclick="">
+          <div class="settings-item-left">
+            <div class="settings-item-name">View Past Reflections</div>
+            <div class="settings-item-desc">Emotional summaries from past sessions</div>
+          </div>
+          <div class="settings-arrow">›</div>
+        </div>
+        <div class="settings-item" onclick="">
+          <div class="settings-item-left">
+            <div class="settings-item-name">Monthly Pattern</div>
+            <div class="settings-item-desc">How you have been feeling over time</div>
+          </div>
+          <div class="settings-arrow">›</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Data and Safety</div>
+      <button class="danger-btn" onclick="if(confirm('Delete all your reflection history? This cannot be undone.')) alert('History cleared. Your space is fresh.')">
+        🗑 &nbsp; Delete All My Entries
+      </button>
+    </div>
+
+    <div class="footer-note">
+      IMH does not store audio recordings.<br>
+      Only emotional summaries, with your permission.<br>
+      Built with care · Not a medical product.
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // Greeting
+  function setGreeting() {
+    const h = new Date().getHours();
+    const el = document.getElementById('greetTime');
+    const gt = document.getElementById('greetText');
+    if (h < 12) {
+      el.textContent = 'Good morning';
+      gt.innerHTML = 'How did you sleep?<br>How are you starting today?';
+    } else if (h < 17) {
+      el.textContent = 'Good afternoon';
+      gt.innerHTML = 'How is your day<br>going so far?';
+    } else {
+      el.textContent = 'Good evening';
+      gt.innerHTML = 'How are you<br>carrying yourself today?';
+    }
+  }
+  setGreeting();
+
+  // Screen switching
+  function showScreen(id, btn) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Record toggle
+  let recording = false;
+  let recordTimer;
+
+  function toggleRecord() {
+    const btn = document.getElementById('recordBtn');
+    const icon = document.getElementById('recordIcon');
+    const label = document.getElementById('recordLabel');
+    const hint = document.getElementById('recordHint');
+    const conv = document.getElementById('conversation');
+
+    if (!recording) {
+      recording = true;
+      btn.classList.add('recording');
+      icon.textContent = '⏹';
+      label.textContent = 'tap to stop';
+      hint.textContent = 'Listening… speak freely.';
+      recordTimer = setTimeout(() => {
+        stopRecord();
+      }, 3000);
+    } else {
+      clearTimeout(recordTimer);
+      stopRecord();
+    }
+  }
+
+  function stopRecord() {
+    recording = false;
+    const btn = document.getElementById('recordBtn');
+    const icon = document.getElementById('recordIcon');
+    const label = document.getElementById('recordLabel');
+    const hint = document.getElementById('recordHint');
+    const conv = document.getElementById('conversation');
+
+    btn.classList.remove('recording');
+    icon.textContent = '🎙️';
+    label.textContent = 'tap to speak';
+    hint.textContent = 'IMH heard you. Here is what it noticed.';
+    conv.style.display = 'flex';
+    conv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Emotion setter
+  function setEmotion(name, color) {
+    const el = document.getElementById('currentEmotion');
+    el.textContent = name;
+    el.style.color = color;
+  }
+
+  // Prompt selection
+  function selectPrompt(btn) {
+    document.querySelectorAll('.prompt-btn').forEach(b => {
+      b.style.borderColor = '';
+      b.style.background = '';
+    });
+    btn.style.borderColor = 'rgba(240,165,0,0.4)';
+    btn.style.background = 'var(--amber-soft)';
+  }
+</script>
+</body>
+</html>

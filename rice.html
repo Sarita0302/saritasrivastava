@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RICE Prioritisation Engine — PM Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0A0F1E;
+    --navy-mid: #111827;
+    --navy-light: #1E2A3B;
+    --blue: #2563EB;
+    --blue-bright: #3B82F6;
+    --teal: #0D9488;
+    --amber: #F59E0B;
+    --red: #EF4444;
+    --green: #10B981;
+    --white: #F8FAFC;
+    --muted: #64748B;
+    --border: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse at 20% 20%, rgba(37,99,235,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(13,148,136,0.08) 0%, transparent 60%);
+  }
+
+  /* HEADER */
+  .header {
+    padding: 32px 48px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .header-left h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    background: linear-gradient(135deg, #F8FAFC 0%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-left p {
+    margin-top: 6px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .badge {
+    background: rgba(37,99,235,0.15);
+    border: 1px solid rgba(37,99,235,0.3);
+    color: #93C5FD;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* FORMULA BAR */
+  .formula-bar {
+    margin: 0 48px;
+    margin-top: 24px;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .formula-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .formula {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: #93C5FD;
+  }
+
+  .formula span {
+    color: var(--amber);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .formula-desc {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 160px);
+  }
+
+  /* LEFT PANEL */
+  .left-panel {
+    border-right: 1px solid var(--border);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .panel-title {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* INPUT FORM */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .input-group label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .input-group label .hint {
+    font-size: 0.6rem;
+    color: rgba(100,116,139,0.6);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .input-group input,
+  .input-group textarea {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .input-group input:focus,
+  .input-group textarea:focus {
+    border-color: rgba(37,99,235,0.5);
+  }
+
+  .input-group textarea {
+    resize: none;
+    height: 64px;
+  }
+
+  /* SLIDER */
+  .slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .slider-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .slider-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .slider-item label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .slider-value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--blue-bright);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 3px;
+    background: var(--navy-light);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--blue-bright);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+  }
+
+  /* ADD BUTTON */
+  .add-btn {
+    background: var(--blue);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .add-btn:hover {
+    background: #1D4ED8;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(37,99,235,0.3);
+  }
+
+  .add-btn:active { transform: translateY(0); }
+
+  /* SCORE PREVIEW */
+  .score-preview {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .score-preview-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .score-preview-value {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--amber);
+  }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+  }
+
+  .right-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .clear-btn {
+    background: transparent;
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 8px;
+    color: #FCA5A5;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .clear-btn:hover {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.5);
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    gap: 12px;
+    border: 1px dashed var(--border);
+    border-radius: 16px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .empty-icon {
+    font-size: 2.5rem;
+    opacity: 0.3;
+  }
+
+  .empty-text {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* FEATURE CARDS */
+  .features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .feature-card {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: start;
+    animation: slideIn 0.3s ease;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 14px 0 0 14px;
+  }
+
+  .rank-1::before { background: var(--amber); }
+  .rank-2::before { background: #94A3B8; }
+  .rank-3::before { background: #B45309; }
+  .rank-other::before { background: var(--navy-mid); }
+
+  .feature-card:hover {
+    border-color: rgba(37,99,235,0.3);
+  }
+
+  .feature-main { display: flex; flex-direction: column; gap: 10px; }
+
+  .feature-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .rank-badge {
+    font-family: 'Fraunces', serif;
+    font-size: 0.7rem;
+    font-weight: 900;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .rank-1 .rank-badge { background: rgba(245,158,11,0.2); color: var(--amber); }
+  .rank-2 .rank-badge { background: rgba(148,163,184,0.2); color: #94A3B8; }
+  .rank-3 .rank-badge { background: rgba(180,83,9,0.2); color: #B45309; }
+  .rank-other .rank-badge { background: var(--navy); color: var(--muted); }
+
+  .feature-name {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .feature-desc {
+    font-size: 0.7rem;
+    color: var(--muted);
+    line-height: 1.5;
+    padding-left: 34px;
+  }
+
+  .metrics-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-left: 34px;
+  }
+
+  .metric-chip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.62rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .metric-chip span {
+    color: var(--white);
+    font-family: 'Fraunces', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* SCORE DISPLAY */
+  .score-display {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .rice-score {
+    font-family: 'Fraunces', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: right;
+  }
+
+  .score-bar {
+    width: 80px;
+    height: 4px;
+    background: var(--navy);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 4px;
+    transition: color 0.2s;
+    align-self: flex-start;
+  }
+
+  .delete-btn:hover { color: #EF4444; }
+
+  /* SUMMARY STATS */
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 20px;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--white);
+  }
+
+  .stat-label {
+    font-size: 0.58rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* RECOMMENDATION */
+  .recommendation {
+    background: linear-gradient(135deg, rgba(13,148,136,0.1) 0%, rgba(37,99,235,0.1) 100%);
+    border: 1px solid rgba(13,148,136,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .rec-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+  .rec-content { display: flex; flex-direction: column; gap: 4px; }
+
+  .rec-title {
+    font-size: 0.65rem;
+    color: #5EEAD4;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .rec-text {
+    font-size: 0.78rem;
+    color: var(--white);
+    line-height: 1.6;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* PRIORITY MATRIX */
+  .matrix-section {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+
+  .matrix-title {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+  }
+
+  .matrix {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    height: 200px;
+    position: relative;
+  }
+
+  .quadrant {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .q-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  .q-desc {
+    font-size: 0.58rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .q1 { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.2); }
+  .q1 .q-label { color: var(--green); }
+  .q2 { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2); }
+  .q2 .q-label { color: var(--amber); }
+  .q3 { background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.2); }
+  .q3 .q-label { color: var(--blue-bright); }
+  .q4 { background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.15); }
+  .q4 .q-label { color: #F87171; }
+
+  .axis-x {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.58rem;
+    color: var(--muted);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .left-panel { border-right: none; border-bottom: 1px solid var(--border); }
+    .header { padding: 24px; }
+    .formula-bar { margin: 0 24px; margin-top: 16px; }
+    .left-panel, .right-panel { padding: 24px; }
+    .summary-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>RICE Prioritisation Engine</h1>
+    <p>Product Manager Portfolio · Sarita Srivastava · 2026</p>
+  </div>
+  <div class="badge">AI-Assisted PM Toolkit</div>
+</div>
+
+<!-- FORMULA BAR -->
+<div class="formula-bar">
+  <div class="formula-label">Formula</div>
+  <div class="formula">
+    RICE = <span>( Reach × Impact × Confidence )</span> ÷ Effort
+  </div>
+  <div class="formula-desc">Higher score = higher priority · Scores are relative</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: INPUT PANEL -->
+  <div class="left-panel">
+    <div class="panel-title">Add Feature or Initiative</div>
+
+    <div class="input-group">
+      <label>Feature Name <span class="hint">required</span></label>
+      <input type="text" id="featureName" placeholder="e.g. EAS Verification Engine" />
+    </div>
+
+    <div class="input-group">
+      <label>Description <span class="hint">optional</span></label>
+      <textarea id="featureDesc" placeholder="What does this feature do and why does it matter?"></textarea>
+    </div>
+
+    <div class="slider-group">
+      <div class="panel-title">Score Parameters (1–10)</div>
+
+      <div class="slider-row">
+        <div class="slider-item">
+          <label>
+            Reach
+            <span class="slider-value" id="reachVal">5</span>
+          </label>
+          <input type="range" id="reach" min="1" max="10" value="5"
+            oninput="document.getElementById('reachVal').textContent=this.value; updatePreview()">
+          <div style="font-size:0.58rem;color:var(--muted)">Users affected / period</div>
+        </div>
+
+        <div class="slider-item">
+          <label>
+            Impact
+            <span class="slider-value" id="impactVal">5</span>
+          </label>
+          <input type="range" id="impact" min="1" max="10" value="5"
+            oninput="document.getElementById('impactVal').textContent=this.value; updatePreview()">
+          <div style="font-size:0.58rem;color:var(--muted)">Effect on goal (1=min, 10=max)</div>
+        </div>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-item">
+          <label>
+            Confidence
+            <span class="slider-value" id="confVal">5</span>
+          </label>
+          <input type="range" id="confidence" min="1" max="10" value="5"
+            oninput="document.getElementById('confVal').textContent=this.value; updatePreview()">
+          <div style="font-size:0.58rem;color:var(--muted)">Certainty of estimates</div>
+        </div>
+
+        <div class="slider-item">
+          <label>
+            Effort
+            <span class="slider-value" id="effortVal">5</span>
+          </label>
+          <input type="range" id="effort" min="1" max="10" value="5"
+            oninput="document.getElementById('effortVal').textContent=this.value; updatePreview()">
+          <div style="font-size:0.58rem;color:var(--muted)">Person-weeks (lower = better)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORE PREVIEW -->
+    <div class="score-preview">
+      <div>
+        <div class="score-preview-label">Estimated RICE Score</div>
+        <div style="font-size:0.65rem;color:var(--muted);margin-top:2px">Before adding to roadmap</div>
+      </div>
+      <div class="score-preview-value" id="previewScore">25.0</div>
+    </div>
+
+    <button class="add-btn" onclick="addFeature()">
+      <span>+</span> Add to Roadmap
+    </button>
+
+  </div>
+
+  <!-- RIGHT: RESULTS PANEL -->
+  <div class="right-panel">
+
+    <div class="right-header">
+      <div class="panel-title" style="border:none;padding:0">Prioritised Roadmap</div>
+      <button class="clear-btn" onclick="clearAll()">Clear All</button>
+    </div>
+
+    <!-- SUMMARY BAR (hidden when empty) -->
+    <div class="summary-bar" id="summaryBar" style="display:none">
+      <div class="stat-item">
+        <div class="stat-value" id="totalFeatures">0</div>
+        <div class="stat-label">Features</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="avgScore">—</div>
+        <div class="stat-label">Avg Score</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="totalEffort">0</div>
+        <div class="stat-label">Total Effort</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="topScore">—</div>
+        <div class="stat-label">Top Score</div>
+      </div>
+    </div>
+
+    <!-- RECOMMENDATION (hidden when empty) -->
+    <div class="recommendation" id="recommendation" style="display:none">
+      <div class="rec-icon">💡</div>
+      <div class="rec-content">
+        <div class="rec-title">PM Insight</div>
+        <div class="rec-text" id="recText">Add features to see insights.</div>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📋</div>
+      <div class="empty-text">
+        No features added yet.<br>
+        Fill the form and click <strong>Add to Roadmap</strong><br>
+        to start building your prioritised backlog.
+      </div>
+    </div>
+
+    <!-- FEATURES LIST -->
+    <div class="features-list" id="featuresList"></div>
+
+    <!-- PRIORITY MATRIX -->
+    <div class="matrix-section" id="matrixSection" style="display:none">
+      <div class="matrix-title">Priority Matrix — Effort vs Impact</div>
+      <div class="matrix">
+        <div class="quadrant q1">
+          <div class="q-label">🚀 Ship Now</div>
+          <div class="q-desc">High impact, low effort — do these first</div>
+        </div>
+        <div class="quadrant q2">
+          <div class="q-label">📅 Plan Carefully</div>
+          <div class="q-desc">High impact, high effort — worth it with planning</div>
+        </div>
+        <div class="quadrant q3">
+          <div class="q-label">⚡ Quick Wins</div>
+          <div class="q-desc">Low impact, low effort — if bandwidth allows</div>
+        </div>
+        <div class="quadrant q4">
+          <div class="q-label">❌ Deprioritise</div>
+          <div class="q-desc">Low impact, high effort — avoid or kill</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let features = [];
+
+  function updatePreview() {
+    const r = +document.getElementById('reach').value;
+    const i = +document.getElementById('impact').value;
+    const c = +document.getElementById('confidence').value;
+    const e = +document.getElementById('effort').value;
+    const score = ((r * i * c) / e).toFixed(1);
+    document.getElementById('previewScore').textContent = score;
+  }
+
+  function addFeature() {
+    const name = document.getElementById('featureName').value.trim();
+    if (!name) {
+      document.getElementById('featureName').style.borderColor = 'rgba(239,68,68,0.5)';
+      setTimeout(() => document.getElementById('featureName').style.borderColor = '', 1500);
+      return;
+    }
+
+    const r = +document.getElementById('reach').value;
+    const i = +document.getElementById('impact').value;
+    const c = +document.getElementById('confidence').value;
+    const e = +document.getElementById('effort').value;
+    const desc = document.getElementById('featureDesc').value.trim();
+    const score = +((r * i * c) / e).toFixed(1);
+
+    features.push({ name, desc, reach: r, impact: i, confidence: c, effort: e, score });
+    features.sort((a, b) => b.score - a.score);
+
+    // Reset form
+    document.getElementById('featureName').value = '';
+    document.getElementById('featureDesc').value = '';
+    ['reach','impact','confidence','effort'].forEach(id => {
+      document.getElementById(id).value = 5;
+    });
+    document.getElementById('reachVal').textContent = '5';
+    document.getElementById('impactVal').textContent = '5';
+    document.getElementById('confVal').textContent = '5';
+    document.getElementById('effortVal').textContent = '5';
+    updatePreview();
+
+    render();
+  }
+
+  function deleteFeature(idx) {
+    features.splice(idx, 1);
+    render();
+  }
+
+  function clearAll() {
+    features = [];
+    render();
+  }
+
+  function getScoreColor(score, max) {
+    const pct = score / max;
+    if (pct > 0.6) return '#10B981';
+    if (pct > 0.3) return '#F59E0B';
+    return '#EF4444';
+  }
+
+  function getRecommendation() {
+    if (features.length === 0) return '';
+    const top = features[0];
+    const highEffort = features.filter(f => f.effort >= 7);
+    const lowConf = features.filter(f => f.confidence <= 3);
+
+    if (lowConf.length > 0) {
+      return `<strong>${lowConf[0].name}</strong> has low confidence (${lowConf[0].confidence}/10). Consider running a discovery spike or user research before committing engineering time.`;
+    }
+    if (highEffort.length > 0 && highEffort[0].score === top.score) {
+      return `Your top-ranked feature <strong>${top.name}</strong> has high effort (${top.effort}/10). Consider breaking it into phases — ship Phase 1 fast and validate before full investment.`;
+    }
+    return `Start with <strong>${top.name}</strong> — it has your highest RICE score of ${top.score}. ${features.length > 2 ? `<strong>${features[features.length-1].name}</strong> ranked last — consider whether it's worth the effort.` : ''}`;
+  }
+
+  function render() {
+    const empty = document.getElementById('emptyState');
+    const list = document.getElementById('featuresList');
+    const summary = document.getElementById('summaryBar');
+    const rec = document.getElementById('recommendation');
+    const matrix = document.getElementById('matrixSection');
+
+    if (features.length === 0) {
+      empty.style.display = 'flex';
+      list.innerHTML = '';
+      summary.style.display = 'none';
+      rec.style.display = 'none';
+      matrix.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+    summary.style.display = 'grid';
+    rec.style.display = 'flex';
+    matrix.style.display = 'block';
+
+    // Summary stats
+    const avg = (features.reduce((s, f) => s + f.score, 0) / features.length).toFixed(1);
+    const totalEffort = features.reduce((s, f) => s + f.effort, 0);
+    document.getElementById('totalFeatures').textContent = features.length;
+    document.getElementById('avgScore').textContent = avg;
+    document.getElementById('totalEffort').textContent = totalEffort;
+    document.getElementById('topScore').textContent = features[0].score;
+
+    // Recommendation
+    document.getElementById('recText').innerHTML = getRecommendation();
+
+    // Feature cards
+    const maxScore = features[0].score;
+    list.innerHTML = features.map((f, idx) => {
+      const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : 'rank-other';
+      const color = getScoreColor(f.score, maxScore);
+      const barWidth = Math.round((f.score / maxScore) * 100);
+
+      return `
+        <div class="feature-card ${rankClass}">
+          <div class="feature-main">
+            <div class="feature-header">
+              <div class="rank-badge">#${idx + 1}</div>
+              <div class="feature-name">${f.name}</div>
+            </div>
+            ${f.desc ? `<div class="feature-desc">${f.desc}</div>` : ''}
+            <div class="metrics-row">
+              <div class="metric-chip">R <span>${f.reach}</span></div>
+              <div class="metric-chip">I <span>${f.impact}</span></div>
+              <div class="metric-chip">C <span>${f.confidence}</span></div>
+              <div class="metric-chip">E <span>${f.effort}</span></div>
+              <div class="metric-chip" style="border-color:rgba(245,158,11,0.3);color:#F59E0B">
+                ${f.impact >= 7 && f.effort <= 4 ? '🚀 Ship Now' : 
+                  f.impact >= 7 ? '📅 Plan' : 
+                  f.effort <= 4 ? '⚡ Quick Win' : '❌ Deprioritise'}
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+            <div class="score-display">
+              <div class="rice-score" style="color:${color}">${f.score}</div>
+              <div class="score-label">RICE Score</div>
+              <div class="score-bar">
+                <div class="score-bar-fill" style="width:${barWidth}%;background:${color}"></div>
+              </div>
+            </div>
+            <button class="delete-btn" onclick="deleteFeature(${idx})">✕</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Init
+  updatePreview();
+  render();
+</script>
+</body>
+</html>
